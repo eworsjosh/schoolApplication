@@ -60,6 +60,14 @@ class AcademicSessionViewSet(ProtectedDeleteMixin, viewsets.ModelViewSet):
             return Response({"detail": "No current academic session is set."}, status=404)
         return Response(self.get_serializer(session).data)
 
+    @action(detail=True, methods=["post"], url_path="set-current")
+    def set_current(self, request, pk=None):
+        session = self.get_object()
+        session.is_current = True
+        session.save()
+        return Response(self.get_serializer(session).data)
+
+
 
 class SchoolClassViewSet(ProtectedDeleteMixin, viewsets.ModelViewSet):
     queryset = SchoolClass.objects.all()

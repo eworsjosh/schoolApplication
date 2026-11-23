@@ -23,6 +23,8 @@ export default function AcademicsSection() {
   const [newSubject, setNewSubject] = useState({ name: "", code: "" });
   // New Session State
   const [newSession, setNewSession] = useState({ name: "", start_date: "", end_date: "", is_current: false });
+  const [editingSession, setEditingSession] = useState(null);
+
   // New Teaching Assignment State
   const [newAssignment, setNewAssignment] = useState({
     teacher: "",
@@ -117,6 +119,55 @@ export default function AcademicsSection() {
       setErrors(errorMessages(err));
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleSetCurrentSession(id) {
+    setSaving(true);
+    try {
+      await api(`/api/academics/sessions/${id}/set-current/`, { method: "POST" });
+      notify("Active academic session updated.");
+      sessions.reload();
+    } catch (err) {
+      alert(errorMessages(err).join("\n"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleUpdateSession(e) {
+    e.preventDefault();
+    if (!editingSession) return;
+    setSaving(true);
+    setErrors([]);
+    try {
+      await api(`/api/academics/sessions/${editingSession.id}/`, {
+        method: "PATCH",
+        body: {
+          name: editingSession.name,
+          start_date: editingSession.start_date,
+          end_date: editingSession.end_date,
+          is_current: editingSession.is_current,
+        },
+      });
+      notify("Academic session updated successfully.");
+      setEditingSession(null);
+      sessions.reload();
+    } catch (err) {
+      setErrors(errorMessages(err));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDeleteSession(id, name) {
+    if (!window.confirm(`Delete academic session "${name}"?`)) return;
+    try {
+      await api(`/api/academics/sessions/${id}/`, { method: "DELETE" });
+      notify("Academic session deleted.");
+      sessions.reload();
+    } catch (err) {
+      alert(errorMessages(err).join("\n"));
     }
   }
 
@@ -639,62 +690,140 @@ export default function AcademicsSection() {
       {subTab === "sessions" && (
         <div className="row g-4">
           <div className="col-lg-4">
-            <div className="card shadow-sm border-0">
-              <div className="card-header bg-white fw-bold py-3">Create Academic Session</div>
-              <div className="card-body">
-                <form onSubmit={handleCreateSession}>
-                  <div className="mb-2">
-                    <label className="form-label small fw-semibold">Session Name *</label>
-                    <input
-                      className="form-control form-control-sm"
-                      placeholder="e.g. 2026/2027"
-                      required
-                      value={newSession.name}
-                      onChange={(e) => setNewSession({ ...newSession, name: e.target.value })}
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label className="form-label small fw-semibold">Start Date *</label>
-                    <input
-                      type="date"
-                      className="form-control form-control-sm"
-                      required
-                      value={newSession.start_date}
-                      onChange={(e) => setNewSession({ ...newSession, start_date: e.target.value })}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label small fw-semibold">End Date *</label>
-                    <input
-                      type="date"
-                      className="form-control form-control-sm"
-                      required
-                      value={newSession.end_date}
-                      onChange={(e) => setNewSession({ ...newSession, end_date: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-check mb-3">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      id="isCurrent"
-                      checked={newSession.is_current}
-                      onChange={(e) => setNewSession({ ...newSession, is_current: e.target.checked })}
-                    />
-                    <label className="form-check-label small" htmlFor="isCurrent">
-                      Set as current active session
-                    </label>
-                  </div>
-                  <button type="submit" className="btn btn-primary btn-sm w-100" disabled={saving}>
-                    {saving ? "Creating…" : "+ Add Session"}
+            {editingSession ? (
+              <div className="card shadow-sm border-primary">
+                <div className="card-header bg-primary text-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                  <span>✏️ Edit Academic Session</span>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-light py-0 px-2"
+                    onClick={() => setEditingSession(null)}
+                  >
+                    Cancel
                   </button>
-                </form>
+                </div>
+                <div className="card-body">
+                  <form onSubmit={handleUpdateSession}>
+                    <div className="mb-2">
+                      <label className="form-label small fw-semibold">Session Name *</label>
+                      <input
+                        className="form-control form-control-sm"
+                        placeholder="e.g. 2026/2027"
+                        required
+                        value={editingSession.name}
+                        onChange={(e) => setEditingSession({ ...editingSession, name: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="form-label small fw-semibold">Start Date *</label>
+                      <input
+                        type="date"
+                        className="form-control form-control-sm"
+                        required
+                        value={editingSession.start_date}
+                        onChange={(e) => setEditingSession({ ...editingSession, start_date: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label small fw-semibold">End Date *</label>
+                      <input
+                        type="date"
+                        className="form-control form-control-sm"
+                        required
+                        value={editingSession.end_date}
+                        onChange={(e) => setEditingSession({ ...editingSession, end_date: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-check mb-3">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="editIsCurrent"
+                        checked={editingSession.is_current}
+                        onChange={(e) => setEditingSession({ ...editingSession, is_current: e.target.checked })}
+                      />
+                      <label className="form-check-label small fw-semibold" htmlFor="editIsCurrent">
+                        Set as current active session
+                      </label>
+                    </div>
+                    <div className="d-flex gap-2">
+                      <button type="submit" className="btn btn-primary btn-sm flex-grow-1" disabled={saving}>
+                        {saving ? "Saving…" : "Save Changes"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-light btn-sm"
+                        onClick={() => setEditingSession(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="card shadow-sm border-0">
+                <div className="card-header bg-white fw-bold py-3">Create Academic Session</div>
+                <div className="card-body">
+                  <form onSubmit={handleCreateSession}>
+                    <div className="mb-2">
+                      <label className="form-label small fw-semibold">Session Name *</label>
+                      <input
+                        className="form-control form-control-sm"
+                        placeholder="e.g. 2026/2027"
+                        required
+                        value={newSession.name}
+                        onChange={(e) => setNewSession({ ...newSession, name: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="form-label small fw-semibold">Start Date *</label>
+                      <input
+                        type="date"
+                        className="form-control form-control-sm"
+                        required
+                        value={newSession.start_date}
+                        onChange={(e) => setNewSession({ ...newSession, start_date: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label small fw-semibold">End Date *</label>
+                      <input
+                        type="date"
+                        className="form-control form-control-sm"
+                        required
+                        value={newSession.end_date}
+                        onChange={(e) => setNewSession({ ...newSession, end_date: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-check mb-3">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="isCurrent"
+                        checked={newSession.is_current}
+                        onChange={(e) => setNewSession({ ...newSession, is_current: e.target.checked })}
+                      />
+                      <label className="form-check-label small" htmlFor="isCurrent">
+                        Set as current active session
+                      </label>
+                    </div>
+                    <button type="submit" className="btn btn-primary btn-sm w-100" disabled={saving}>
+                      {saving ? "Creating…" : "+ Add Session"}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
           <div className="col-lg-8">
             <div className="card shadow-sm border-0">
-              <div className="card-header bg-white fw-bold py-3">Academic Sessions</div>
+              <div className="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                <span>Academic Sessions</span>
+                <span className="badge bg-secondary-subtle text-secondary small">
+                  {sessions.data?.length || 0} registered
+                </span>
+              </div>
               <div className="table-responsive">
                 <table className="table table-hover align-middle mb-0">
                   <thead className="table-light">
@@ -702,25 +831,69 @@ export default function AcademicsSection() {
                       <th>Session Name</th>
                       <th>Dates</th>
                       <th>Status</th>
+                      <th className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sessions.loading && (
-                      <tr><td colSpan="3" className="text-center py-4 text-muted">Loading sessions…</td></tr>
+                      <tr><td colSpan="4" className="text-center py-4 text-muted">Loading sessions…</td></tr>
                     )}
                     {sessions.data?.map((s) => (
-                      <tr key={s.id}>
-                        <td className="fw-semibold">{s.name}</td>
+                      <tr key={s.id} className={s.is_current ? "table-success-subtle" : ""}>
+                        <td className="fw-semibold">
+                          {s.name}
+                          {s.is_current && (
+                            <span className="badge bg-success ms-2" style={{ fontSize: "0.7rem" }}>ACTIVE</span>
+                          )}
+                        </td>
                         <td className="small text-muted">{s.start_date} to {s.end_date}</td>
                         <td>
                           {s.is_current ? (
-                            <span className="badge bg-success">Current Session</span>
+                            <span className="badge bg-success-subtle text-success border border-success">
+                              ✓ Current Session
+                            </span>
                           ) : (
-                            <span className="badge bg-light text-dark border">Inactive</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-success py-1 px-2 fw-semibold"
+                              style={{ fontSize: "0.78rem" }}
+                              onClick={() => handleSetCurrentSession(s.id)}
+                              disabled={saving}
+                              title="Set this session as the active academic year"
+                            >
+                              ⭐ Make Current
+                            </button>
                           )}
+                        </td>
+                        <td className="text-end">
+                          <div className="btn-group btn-group-sm">
+                            <button
+                              type="button"
+                              className="btn btn-outline-primary"
+                              onClick={() => setEditingSession({ ...s })}
+                              title="Edit this session"
+                            >
+                              ✏️ Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-outline-danger"
+                              onClick={() => handleDeleteSession(s.id, s.name)}
+                              title="Delete this session"
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
+                    {!sessions.loading && (!sessions.data || sessions.data.length === 0) && (
+                      <tr>
+                        <td colSpan="4" className="text-center py-4 text-muted">
+                          No academic sessions created yet. Create one using the form on the left.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

@@ -101,12 +101,12 @@ body {
 }
 
 .btn-portal-logout {
-  background: rgba(239, 68, 68, 0.12) !important;
-  color: #fca5a5 !important;
-  border: 1px solid rgba(239, 68, 68, 0.3) !important;
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.9rem;
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1px solid #ef4444 !important;
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 0.45rem 1rem;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
@@ -114,15 +114,17 @@ body {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
 }
 
 .btn-portal-logout:hover {
-  background: #ef4444 !important;
+  background: #b91c1c !important;
   color: #ffffff !important;
-  border-color: #ef4444 !important;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  border-color: #b91c1c !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
   transform: translateY(-1px);
 }
+
 
 .btn-portal-website {
   background: rgba(255, 255, 255, 0.08) !important;

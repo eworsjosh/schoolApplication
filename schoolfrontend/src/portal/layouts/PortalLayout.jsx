@@ -14,7 +14,6 @@ const ROLE_BADGES = {
 export default function PortalLayout() {
   const { user, logout } = useAuth();
   const { config } = useSchoolConfig();
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -42,133 +41,144 @@ export default function PortalLayout() {
 
   return (
     <div className="min-vh-100 d-flex flex-column" style={{ backgroundColor: "#f8fafc" }}>
-      {/* Top Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark portal-navbar sticky-top">
-        <div className="container-fluid px-3 px-lg-4">
-          {/* Brand Logo & Name */}
-          <Link
-            className="navbar-brand d-flex align-items-center gap-2 text-decoration-none me-3"
-            to={homeFor(user.role) ?? "/"}
-          >
-            {config.logo ? (
-              <img
-                src={config.logo}
-                alt={`${config.name} logo`}
-                className="portal-brand-logo"
-              />
-            ) : (
-              <div className="portal-brand-avatar">{brandInitial}</div>
-            )}
-            <div className="d-flex flex-column">
-              <span className="portal-school-title">
-                {config.short_name || config.name}
-              </span>
-              <span className="badge bg-white-subtle text-white-50 p-0 text-start" style={{ fontSize: "0.68rem", letterSpacing: "0.08em" }}>
-                MANAGEMENT PORTAL
-              </span>
-            </div>
-          </Link>
-
-          {/* Mobile Toggler */}
-          <button
-            className="navbar-toggler border-0 p-1"
-            type="button"
-            aria-label="Toggle navigation"
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
-
-          {/* Navigation Items & User Controls */}
-          <div className={`collapse navbar-collapse${open ? " show" : ""} mt-2 mt-lg-0`}>
-            {/* Left Nav Links */}
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
-              <li className="nav-item">
-                <NavLink
-                  to={homeFor(user.role) ?? "/"}
-                  end
-                  onClick={() => setOpen(false)}
-                  className={({ isActive }) =>
-                    `nav-link px-3 py-2 rounded-2 fw-semibold ${
-                      isActive ? "active text-white bg-white-subtle" : "text-white-50"
-                    }`
-                  }
-                >
-                  📊 Dashboard
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className="btn-portal-website nav-link d-inline-flex align-items-center gap-1 my-1 my-lg-0"
-                  to="/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span>🌐</span> School Website
-                </Link>
-              </li>
-            </ul>
-
-            {/* Right User Bar */}
-            <div className="d-flex flex-wrap align-items-center gap-2 pt-2 pt-lg-0 border-top border-lg-0 border-secondary">
-              {/* User Chip */}
-              <div className="portal-user-chip">
-                <div className="portal-avatar-circle">{userInitials}</div>
-                <div className="d-flex flex-column">
-                  <span className="text-white fw-bold" style={{ fontSize: "0.85rem", lineHeight: 1.2 }}>
-                    {displayName}
-                  </span>
-                  <div className="d-flex align-items-center gap-1">
-                    <span
-                      className="portal-badge-pill"
-                      style={{
-                        backgroundColor: roleMeta.bg,
-                        color: roleMeta.color,
-                        border: `1px solid ${roleMeta.border}`,
-                      }}
-                    >
-                      {roleMeta.label}
-                    </span>
-                  </div>
-                </div>
+      {/* Top Permanent Navbar (Always Visible, Never Collapses Away) */}
+      <nav className="portal-navbar sticky-top">
+        <div className="container-fluid px-3 px-lg-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+          
+          {/* Left: Brand Logo, School Title, and Quick Navigation Links */}
+          <div className="d-flex align-items-center gap-3">
+            <Link
+              className="d-flex align-items-center gap-2 text-decoration-none"
+              to={homeFor(user.role) ?? "/"}
+            >
+              {config.logo ? (
+                <img
+                  src={config.logo}
+                  alt={`${config.name} logo`}
+                  className="portal-brand-logo"
+                />
+              ) : (
+                <div className="portal-brand-avatar">{brandInitial}</div>
+              )}
+              <div className="d-flex flex-column">
+                <span className="portal-school-title">
+                  {config.short_name || config.name}
+                </span>
+                <span className="badge bg-white-subtle text-white-50 p-0 text-start" style={{ fontSize: "0.68rem", letterSpacing: "0.08em" }}>
+                  PORTAL
+                </span>
               </div>
+            </Link>
 
-              {/* Password Setting Link */}
+            {/* Quick Links on Left */}
+            <div className="d-none d-md-flex align-items-center gap-2 ms-2 ps-3 border-start border-secondary">
               <NavLink
-                to="/change-password"
-                onClick={() => setOpen(false)}
-                className="btn btn-sm text-white-50 hover-text-white d-inline-flex align-items-center gap-1 text-decoration-none px-2 py-1"
-                title="Change account password"
+                to={homeFor(user.role) ?? "/"}
+                end
+                className={({ isActive }) =>
+                  `px-2 py-1 rounded text-decoration-none small fw-semibold ${
+                    isActive ? "text-white bg-white-subtle" : "text-white-50 hover-text-white"
+                  }`
+                }
               >
-                <span>🔑</span>
-                <span className="small">Password</span>
+                📊 Dashboard
               </NavLink>
-
-              {/* High-Visibility Logout Button */}
-              <button
-                type="button"
-                className="btn-portal-logout"
-                onClick={handleLogout}
-                title="Sign out of your account"
+              <Link
+                className="btn-portal-website"
+                to="/"
+                target="_blank"
+                rel="noreferrer"
+                title="View public school website"
               >
-                <span>🚪</span>
-                <span>Log out</span>
-              </button>
+                🌐 School Website
+              </Link>
             </div>
           </div>
+
+          {/* Right: User Information and Prominent Logout Button (Always Visible!) */}
+          <div className="d-flex align-items-center gap-2 ms-auto">
+            {/* User Chip */}
+            <div className="portal-user-chip d-none d-sm-flex">
+              <div className="portal-avatar-circle">{userInitials}</div>
+              <div className="d-flex flex-column">
+                <span className="text-white fw-bold" style={{ fontSize: "0.82rem", lineHeight: 1.2 }}>
+                  {displayName}
+                </span>
+                <span
+                  className="portal-badge-pill"
+                  style={{
+                    backgroundColor: roleMeta.bg,
+                    color: roleMeta.color,
+                    border: `1px solid ${roleMeta.border}`,
+                  }}
+                >
+                  {roleMeta.label}
+                </span>
+              </div>
+            </div>
+
+            {/* Change Password Link */}
+            <NavLink
+              to="/change-password"
+              className="btn btn-sm text-white-50 hover-text-white d-none d-sm-inline-flex align-items-center gap-1 text-decoration-none px-2 py-1"
+              title="Change your account password"
+            >
+              <span>🔑</span>
+              <span className="small">Password</span>
+            </NavLink>
+
+            {/* Prominent High-Visibility Log Out Button (Always visible on all screens!) */}
+            <button
+              type="button"
+              className="btn-portal-logout"
+              onClick={handleLogout}
+              title="Sign out of the school portal"
+            >
+              <span>🚪</span>
+              <span>Log out</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Sub-Row for Quick Links on very small screens */}
+        <div className="d-flex d-md-none justify-content-between align-items-center px-3 pt-2 mt-1 border-top border-secondary">
+          <NavLink
+            to={homeFor(user.role) ?? "/"}
+            end
+            className={({ isActive }) =>
+              `text-decoration-none small fw-semibold ${
+                isActive ? "text-white" : "text-white-50"
+              }`
+            }
+          >
+            📊 Dashboard
+          </NavLink>
+          <NavLink
+            to="/change-password"
+            className="text-decoration-none small text-white-50"
+          >
+            🔑 Password
+          </NavLink>
+          <Link
+            to="/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-decoration-none small text-white-50"
+          >
+            🌐 Website
+          </Link>
         </div>
       </nav>
 
-      {/* Main Content Viewport */}
+      {/* Main Content Area */}
       <main className="container-fluid px-3 px-lg-4 py-4 flex-grow-1" style={{ maxWidth: "1400px" }}>
         <Outlet />
       </main>
 
-      {/* Subtle Footer */}
+      {/* Footer */}
       <footer className="border-top py-3 text-center text-muted small bg-white mt-auto">
         <div className="container">
-          <span>{config.name}</span> &copy; {new Date().getFullYear()} — Secure Management Portal
+          <span>{config.name}</span> &copy; {new Date().getFullYear()} — Secure School Management Portal
         </div>
       </footer>
     </div>
