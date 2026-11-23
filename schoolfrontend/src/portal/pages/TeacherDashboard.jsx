@@ -13,29 +13,36 @@ export default function TeacherDashboard() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-3 border-bottom">
+      <div className="portal-page-header d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
-          <h1 className="h3 fw-bold text-dark mb-1">Teacher Portal</h1>
-          <p className="text-muted small mb-0">Welcome back, <strong>{displayName}</strong></p>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <h1 className="h3 fw-bold text-dark mb-0">Teacher Portal</h1>
+            <span className="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+              Faculty Access
+            </span>
+          </div>
+          <p className="text-muted small mb-0">
+            Welcome back, <strong>{displayName}</strong>
+          </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="d-flex flex-wrap gap-2 py-2">
+      <div className="d-flex flex-wrap gap-2 py-1">
         <button
-          className={`btn btn-sm ${activeTab === "classes" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "classes" ? "active" : ""}`}
           onClick={() => setActiveTab("classes")}
         >
           🏫 My Classes & Students
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "attendance" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "attendance" ? "active" : ""}`}
           onClick={() => setActiveTab("attendance")}
         >
           📋 Mark Attendance
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "exams" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "exams" ? "active" : ""}`}
           onClick={() => setActiveTab("exams")}
         >
           📝 Assessments & Scores

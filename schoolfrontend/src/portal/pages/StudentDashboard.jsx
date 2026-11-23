@@ -14,35 +14,42 @@ export default function StudentDashboard() {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-3 border-bottom">
+      <div className="portal-page-header d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
-          <h1 className="h3 fw-bold text-dark mb-1">Student Portal</h1>
-          <p className="text-muted small mb-0">Welcome, <strong>{displayName}</strong></p>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <h1 className="h3 fw-bold text-dark mb-0">Student Portal</h1>
+            <span className="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+              Student Access
+            </span>
+          </div>
+          <p className="text-muted small mb-0">
+            Welcome, <strong>{displayName}</strong>
+          </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="d-flex flex-wrap gap-2 py-2">
+      <div className="d-flex flex-wrap gap-2 py-1">
         <button
-          className={`btn btn-sm ${activeTab === "profile" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "profile" ? "active" : ""}`}
           onClick={() => setActiveTab("profile")}
         >
           🎓 Profile & Subjects
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "attendance" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "attendance" ? "active" : ""}`}
           onClick={() => setActiveTab("attendance")}
         >
-          📋 Attendance
+          📋 Attendance History
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "grades" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "grades" ? "active" : ""}`}
           onClick={() => setActiveTab("grades")}
         >
           📝 Grades & Report Card
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "fees" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "fees" ? "active" : ""}`}
           onClick={() => setActiveTab("fees")}
         >
           💳 School Fees & Payment

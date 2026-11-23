@@ -26,12 +26,17 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-4">
       {/* Top Banner */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-3 border-bottom">
+      <div className="portal-page-header d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
-          <h1 className="h3 fw-bold text-dark mb-1">Administrator Portal</h1>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <h1 className="h3 fw-bold text-dark mb-0">Administrator Portal</h1>
+            <span className="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1">
+              Admin Access
+            </span>
+          </div>
           <p className="text-muted small mb-0">
             Current Academic Session:{" "}
-            <span className="badge bg-primary-subtle text-primary fw-semibold">
+            <span className="badge bg-primary-subtle text-primary fw-semibold px-2 py-1">
               {session.loading ? "Loading…" : session.data?.name || "Not set"}
             </span>
           </p>
@@ -39,57 +44,57 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Module Tabs */}
-      <div className="d-flex flex-wrap gap-2 py-2">
+      <div className="d-flex flex-wrap gap-2 py-1">
         <button
-          className={`btn btn-sm ${activeTab === "overview" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "overview" ? "active" : ""}`}
           onClick={() => setActiveTab("overview")}
         >
           📊 Overview
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "users" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "users" ? "active" : ""}`}
           onClick={() => setActiveTab("users")}
         >
           👥 User Accounts
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "students" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "students" ? "active" : ""}`}
           onClick={() => setActiveTab("students")}
         >
           🎓 Students
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "teachers" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "teachers" ? "active" : ""}`}
           onClick={() => setActiveTab("teachers")}
         >
           🧑‍🏫 Teachers
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "academics" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "academics" ? "active" : ""}`}
           onClick={() => setActiveTab("academics")}
         >
-          📚 Academics & Enrollment
+          📚 Academics & Classes
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "attendance" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "attendance" ? "active" : ""}`}
           onClick={() => setActiveTab("attendance")}
         >
           📋 Attendance
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "exams" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "exams" ? "active" : ""}`}
           onClick={() => setActiveTab("exams")}
         >
           📝 Exams & Grades
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "fees" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "fees" ? "active" : ""}`}
           onClick={() => setActiveTab("fees")}
         >
           💳 School Fees
         </button>
         <button
-          className={`btn btn-sm ${activeTab === "settings" ? "btn-primary" : "btn-light"}`}
+          className={`portal-tab-pill ${activeTab === "settings" ? "active" : ""}`}
           onClick={() => setActiveTab("settings")}
         >
           ⚙️ School Settings
