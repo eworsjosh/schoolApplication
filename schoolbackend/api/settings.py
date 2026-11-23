@@ -40,9 +40,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-temp-key-change-in-pr
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for host in os.environ.get("ALLOWED_HOSTS", "*").split(",")
     if host.strip()
 ]
+# Automatically allow all Railway and Render domains
+ALLOWED_HOSTS.extend([".railway.app", ".up.railway.app", ".onrender.com", "localhost", "127.0.0.1"])
 render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if render_hostname:
     ALLOWED_HOSTS.append(render_hostname.strip())
@@ -51,8 +53,6 @@ railway_hostname = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "").strip()
 if railway_hostname:
     ALLOWED_HOSTS.append(railway_hostname.strip())
 
-if DEBUG:
-    ALLOWED_HOSTS.extend(["localhost", "127.0.0.1", "[::1]"])
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 
 CSRF_TRUSTED_ORIGINS = [
@@ -60,10 +60,17 @@ CSRF_TRUSTED_ORIGINS = [
     for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
     if origin.strip()
 ]
+CSRF_TRUSTED_ORIGINS.extend([
+    "https://*.railway.app",
+    "https://*.up.railway.app",
+    "https://*.onrender.com",
+    "https://schoolapplication-production.up.railway.app",
+])
 if render_hostname:
     CSRF_TRUSTED_ORIGINS.append(f"https://{render_hostname}")
 if railway_hostname:
     CSRF_TRUSTED_ORIGINS.append(f"https://{railway_hostname}")
+
 
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
