@@ -1,0 +1,45 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+schoolbackend/.env
+schoolfrontend/.env
+
+# Python / Virtual Environment
+venv/
+.venv/
+schoolbackend/venv/
+schoolbackend/.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+
+# SQLite database
+db.sqlite3
+schoolbackend/db.sqlite3
+
+# Static and media files
+staticfiles/
+media/
+schoolbackend/staticfiles/
+schoolbackend/media/
+
+# Node / Frontend
+node_modules/
+schoolfrontend/node_modules/
+dist/
+dist-ssr/
+schoolfrontend/dist/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

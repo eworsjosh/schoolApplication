@@ -1,0 +1,28 @@
+
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+from django.http import JsonResponse
+
+
+from administrator.views import SchoolConfigView
+
+
+def home(request):
+    return JsonResponse({"service": "School Management API", "status": "ok"})
+
+
+urlpatterns = [
+    path("", home),
+    path('admin/', admin.site.urls),
+    path("api/school-config/", SchoolConfigView.as_view(), name="school-config"),
+    path("api/auth/", include("administrator.urls")),
+    path("api/", include("student.urls")),
+    path("api/", include("teacher.urls")),
+    path("api/academics/", include("academics.urls")),
+    path("api/attendance/", include("attendance.urls")),
+    path("api/exams/", include("exams.urls")),
+    path("api/fees/", include("fees.urls")),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
