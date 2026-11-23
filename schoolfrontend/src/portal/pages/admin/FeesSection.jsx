@@ -16,14 +16,15 @@ export default function FeesSection() {
   // New Fee Structure Modal
   const [showAddStructure, setShowAddStructure] = useState(false);
   const [newStructure, setNewStructure] = useState({
-    name: "Tuition Fee",
+    name: "School Fees",
     school_class: "",
     session: "",
-    term: "first",
+    term: "",
     amount: "",
     description: "",
     due_date: "",
   });
+
 
   // Record Payment Modal
   const [showAddPayment, setShowAddPayment] = useState(false);
@@ -63,12 +64,12 @@ export default function FeesSection() {
   function openAddFeeStructure() {
     setErrors([]);
     setNewStructure({
-      name: "Tuition Fee",
-      school_class: classes.data?.[0]?.id || "",
-      session: currentSession?.id || "",
-      term: "first",
+      name: "School Fees",
+      school_class: "",
+      session: currentSession?.id || sessions.data?.[0]?.id || "",
+      term: "",
       amount: "50000",
-      description: "Term tuition fee",
+      description: "Academic Session fee",
       due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     });
     setShowAddStructure(true);
@@ -83,15 +84,17 @@ export default function FeesSection() {
         method: "POST",
         body: {
           ...newStructure,
-          school_class: Number(newStructure.school_class),
+          school_class: newStructure.school_class ? Number(newStructure.school_class) : null,
           session: Number(newStructure.session || currentSession?.id),
           amount: Number(newStructure.amount),
+          term: newStructure.term || "",
         },
       });
       setShowAddStructure(false);
       notify("Fee structure created successfully.");
       structures.reload();
     } catch (err) {
+
       setErrors(errorMessages(err));
     } finally {
       setSaving(false);
@@ -237,8 +240,8 @@ export default function FeesSection() {
               <thead className="table-light">
                 <tr>
                   <th>Fee Name</th>
-                  <th>Class</th>
-                  <th>Term</th>
+                  <th>Target Class</th>
+                  <th>Academic Session</th>
                   <th>Amount</th>
                   <th>Due Date</th>
                   <th>Description</th>
@@ -255,8 +258,13 @@ export default function FeesSection() {
                 {structureList.map((fee) => (
                   <tr key={fee.id}>
                     <td className="fw-semibold">{fee.name}</td>
-                    <td>{fee.class_name || fee.school_class_name || `Class #${fee.school_class}`}</td>
-                    <td className="text-capitalize">{fee.term} Term</td>
+                    <td>{fee.class_name || fee.school_class_name || (fee.school_class ? `Class #${fee.school_class}` : "All Classes")}</td>
+                    <td>
+                      <span className="fw-semibold">{fee.session_name || "Current Session"}</span>
+                      <span className="badge bg-secondary-subtle text-secondary ms-1" style={{ fontSize: "0.72rem" }}>
+                        {fee.term_label || (fee.term ? `${fee.term} Term` : "Full Session")}
+                      </span>
+                    </td>
                     <td className="fw-bold text-primary">{naira(fee.amount)}</td>
                     <td className="small text-muted">{fee.due_date || "—"}</td>
                     <td className="small text-muted text-truncate" style={{ maxWidth: 200 }}>
@@ -500,33 +508,49 @@ export default function FeesSection() {
                   </div>
                   <div className="row g-2 mb-2">
                     <div className="col-sm-6">
-                      <label className="form-label small fw-semibold">Target Class *</label>
+                      <label className="form-label small fw-semibold">Academic Session *</label>
                       <select
                         className="form-select form-select-sm"
                         required
+                        value={newStructure.session}
+                        onChange={(e) => setNewStructure({ ...newStructure, session: e.target.value })}
+                      >
+                        <option value="">-- Choose Academic Session --</option>
+                        {sessions.data?.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name} {s.is_current ? "★ (Current)" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-sm-6">
+                      <label className="form-label small fw-semibold">Target Class</label>
+                      <select
+                        className="form-select form-select-sm"
                         value={newStructure.school_class}
                         onChange={(e) => setNewStructure({ ...newStructure, school_class: e.target.value })}
                       >
-                        <option value="">-- Choose Class --</option>
+                        <option value="">All Classes (General School Fee)</option>
                         {classes.data?.map((c) => (
                           <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                       </select>
                     </div>
+                  </div>
+                  <div className="row g-2 mb-2">
                     <div className="col-sm-6">
-                      <label className="form-label small fw-semibold">Term *</label>
+                      <label className="form-label small fw-semibold">Fee Frequency</label>
                       <select
                         className="form-select form-select-sm"
                         value={newStructure.term}
                         onChange={(e) => setNewStructure({ ...newStructure, term: e.target.value })}
                       >
-                        <option value="first">First Term</option>
-                        <option value="second">Second Term</option>
-                        <option value="third">Third Term</option>
+                        <option value="">Full Academic Session (Annual)</option>
+                        <option value="first">First Term Only</option>
+                        <option value="second">Second Term Only</option>
+                        <option value="third">Third Term Only</option>
                       </select>
                     </div>
-                  </div>
-                  <div className="row g-2 mb-2">
                     <div className="col-sm-6">
                       <label className="form-label small fw-semibold">Amount (NGN) *</label>
                       <input
@@ -538,7 +562,9 @@ export default function FeesSection() {
                         onChange={(e) => setNewStructure({ ...newStructure, amount: e.target.value })}
                       />
                     </div>
-                    <div className="col-sm-6">
+                  </div>
+                  <div className="row g-2 mb-2">
+                    <div className="col-sm-12">
                       <label className="form-label small fw-semibold">Due Date</label>
                       <input
                         type="date"

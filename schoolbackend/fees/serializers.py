@@ -25,7 +25,11 @@ class FeeStructureSerializer(serializers.ModelSerializer):
             "term", "term_label", "school_class", "class_name", "created_at",
         ]
         read_only_fields = ["created_at"]
+        extra_kwargs = {
+            "term": {"required": False, "allow_blank": True},
+        }
         validators = []
+
 
     def get_class_name(self, obj):
         return obj.school_class.name if obj.school_class else "All classes"

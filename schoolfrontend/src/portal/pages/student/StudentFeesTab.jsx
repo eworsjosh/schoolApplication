@@ -73,7 +73,7 @@ export default function StudentFeesTab() {
       <div className="card shadow-sm border-0">
         <div className="card-header bg-white py-3">
           <h5 className="fw-bold mb-0">Fee Schedule & Online Payment</h5>
-          <p className="text-muted small mb-0">Term fee breakdown and secure online payment via Paystack.</p>
+          <p className="text-muted small mb-0">Academic Session fee breakdown and secure online payment via Paystack.</p>
         </div>
         <div className="card-body p-0">
           {balance.loading && (
@@ -90,7 +90,7 @@ export default function StudentFeesTab() {
                 <thead className="table-light">
                   <tr>
                     <th>Fee Name</th>
-                    <th>Term</th>
+                    <th>Coverage</th>
                     <th>Amount Due</th>
                     <th>Amount Paid</th>
                     <th>Remaining Balance</th>
@@ -109,7 +109,7 @@ export default function StudentFeesTab() {
                             <div className="small text-muted">{fee.description}</div>
                           )}
                         </td>
-                        <td className="text-capitalize">{fee.term} Term</td>
+                        <td className="text-capitalize">{fee.term ? `${fee.term} Term` : "Full Session"}</td>
                         <td className="fw-semibold">{naira(fee.amount)}</td>
                         <td className="text-success">{naira(fee.paid)}</td>
                         <td className={`fw-bold ${isFullyPaid ? "text-success" : "text-danger"}`}>
