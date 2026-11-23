@@ -77,11 +77,21 @@ CORS_ALLOWED_ORIGINS = [
     for origin in os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000").split(",")
     if origin.strip()
 ]
+CORS_ALLOWED_ORIGINS.extend([
+    "https://school-application-hazel.vercel.app",
+])
+
+# Automatically allow any Vercel and Netlify deployment origin
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/.*\.vercel\.app$",
+    r"^https:\/\/.*\.netlify\.app$",
+]
 
 if os.environ.get("CORS_ALLOW_ALL_ORIGINS", "False").lower() in ("true", "1"):
     CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
+
 
 SCHOOL_NAME = os.environ.get("SCHOOL_NAME", "School Management Portal")
 
